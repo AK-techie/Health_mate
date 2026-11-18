@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 
+import BottomNavigation from '../../components/BottomNavigation';
 import HealthIcon from '../../components/HealthIcon';
 import PrimaryButton from '../../components/PrimaryButton';
 import ScreenBackground from '../../components/ScreenBackground';
@@ -41,8 +42,20 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       ? 'You have reached your daily step goal!'
       : `You're ${remainingSteps.toLocaleString('en-GB')} steps away from your daily goal!`;
 
+  function openDailyRecord() {
+    if (record) {
+      navigation.navigate('DailyRecord', { recordId: record.id });
+    } else {
+      navigation.navigate('AddRecord', { date: dateKey });
+    }
+  }
+
   function openRecordForm() {
-    navigation.navigate('AddRecord', { date: dateKey });
+    if (record) {
+      navigation.navigate('EditRecord', { recordId: record.id });
+    } else {
+      navigation.navigate('AddRecord', { date: dateKey });
+    }
   }
 
   return (
@@ -117,14 +130,14 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                   })} L`}
                   caption={`of ${WATER_GOAL / 1000} L`}
                   progress={water / WATER_GOAL}
-                  onPress={openRecordForm}
+                  onPress={openDailyRecord}
                 />
                 <DashboardMetricCard
                   icon="flame"
                   title="Calories"
                   value={calories.toLocaleString('en-GB')}
                   caption="kcal burned"
-                  onPress={openRecordForm}
+                  onPress={openDailyRecord}
                 />
               </View>
 
@@ -170,6 +183,11 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           )}
         </View>
       </ScrollView>
+      <BottomNavigation
+        active="Home"
+        onHome={refresh}
+        onHistory={() => navigation.navigate('History')}
+      />
     </ScreenBackground>
   );
 }

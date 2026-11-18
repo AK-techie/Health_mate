@@ -8,6 +8,13 @@ const icons = {
   back: require('../../assets/icons/back.png'),
   search: require('../../assets/icons/search.png'),
   calendar: require('../../assets/icons/calendar.png'),
+  home: require('../../assets/icons/home.png'),
+  'home-active': require('../../assets/icons/home-active.png'),
+  history: require('../../assets/icons/history.png'),
+  'history-active': require('../../assets/icons/history-active.png'),
+  edit: require('../../assets/icons/edit.png'),
+  delete: require('../../assets/icons/delete.png'),
+  'search-empty': require('../../assets/icons/search-empty.png'),
 };
 
 export type HealthIconName = keyof typeof icons;

@@ -37,3 +37,21 @@ export function getGreeting(date: Date): string {
   if (hour < 17) return 'Good afternoon';
   return 'Good evening';
 }
+
+export function formatShortRecordDate(value: string): string {
+  return (
+    parseDateKey(value)?.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }) ?? value
+  );
+}
+
+export function getRecordDayLabel(value: string, today: Date): string {
+  if (value === formatDateKey(today)) return 'Today';
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (value === formatDateKey(yesterday)) return 'Yesterday';
+  return parseDateKey(value)?.toLocaleDateString('en-GB', { weekday: 'long' }) ?? value;
+}

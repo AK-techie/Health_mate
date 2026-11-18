@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import { formatDateKey, parseDateKey } from '../../../utils/dates';
-import { getRecordByDate, saveRecord } from '../data/recordRepository';
+import {
+  getRecordByDate,
+  getRecordById,
+  saveRecord,
+  updateRecord,
+} from '../data/recordRepository';
+import { RecordDateConflictError, RecordNotFoundError } from '../data/recordErrors';
 import type { MetricName, RecordFormErrors, RecordFormValues } from '../types';
 import { validateRecordForm } from '../utils/validation';
 
@@ -10,6 +16,7 @@ const EMPTY_FORM: RecordFormValues = { steps: '', calories: '', water: '' };
 export default function useRecordForm(
   initialDate: string | undefined,
   onSaved: () => void,
+  recordId?: number,
 ) {
   const [dateKey, setDateKey] = useState(() => {
     return initialDate && parseDateKey(initialDate)
@@ -24,12 +31,23 @@ export default function useRecordForm(
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
+  const editing = recordId !== undefined;
+  const queryDate = editing ? null : dateKey;
 
   useEffect(() => {
     let active = true;
-    getRecordByDate(dateKey)
+    const request =
+      recordId === undefined ? getRecordByDate(queryDate ?? '') : getRecordById(recordId);
+    request
       .then((record) => {
         if (!active) return;
+        if (recordId !== undefined && !record) {
+          setLoadError(
+            'This record is no longer available. Return to History and choose another record.',
+          );
+          return;
+        }
+        if (recordId !== undefined && record) setDateKey(record.date);
         setExisting(record !== null);
         setValues(
           record
@@ -50,7 +68,7 @@ export default function useRecordForm(
     return () => {
       active = false;
     };
-  }, [dateKey, reload]);
+  }, [recordId, queryDate, reload]);
 
   function prepareLoad() {
     setLoading(true);
@@ -75,7 +93,8 @@ export default function useRecordForm(
   function changeDate(selectedDate: Date) {
     const nextDate = formatDateKey(selectedDate);
     if (nextDate !== dateKey) {
-      prepareLoad();
+      if (!editing) prepareLoad();
+      else setSaveError(null);
       setDateKey(nextDate);
     }
   }
@@ -92,16 +111,20 @@ export default function useRecordForm(
     setSaving(true);
     setSaveError(null);
     try {
-      await saveRecord({
+      const record = {
         date: dateKey,
         steps: Number(values.steps),
         calories: Number(values.calories),
         water: Number(values.water),
-      });
+      };
+      if (recordId === undefined) await saveRecord(record);
+      else await updateRecord(recordId, record);
       onSaved();
-    } catch {
+    } catch (error) {
       setSaveError(
-        'Your record could not be saved. Your entries are still here. Please try again.',
+        error instanceof RecordDateConflictError || error instanceof RecordNotFoundError
+          ? error.message
+          : 'Your record could not be saved. Your entries are still here. Please try again.',
       );
     } finally {
       setSaving(false);
@@ -115,6 +138,7 @@ export default function useRecordForm(
     loading,
     saving,
     existing,
+    editing,
     loadError,
     saveError,
     changeValue,
@@ -123,3 +147,5 @@ export default function useRecordForm(
     handleSave,
   };
 }
+
+export type RecordFormState = ReturnType<typeof useRecordForm>;

@@ -18,4 +18,9 @@ export const colors = {
   progressTrack: '#315F4A',
   lime: '#BEF46A',
   error: '#B3261E',
+  danger: '#AB4235',
+  recordSurface: '#FAFBF6',
+  recordBorder: '#CDD9CC',
+  recordPanel: '#103D30',
+  recordAccent: '#92C45C',
 };

@@ -28,7 +28,7 @@ export default function DashboardMetricCard({
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${title}: ${value}, ${caption}`}
-      accessibilityHint="Opens the daily activity form for today's date."
+      accessibilityHint="Opens today's record, or the add form if no record is saved."
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}
     >
       <LinearGradient
