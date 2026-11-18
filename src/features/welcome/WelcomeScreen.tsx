@@ -42,8 +42,7 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
                 {'A little better health style,\nevery day.'}
               </Text>
               <Text style={styles.description}>
-                Your steps, hydration and daily activity — all in one peaceful
-                place.
+                Your steps, hydration and daily activity — all in one peaceful place.
               </Text>
             </View>
 
@@ -62,9 +61,7 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
               onPress={() => navigation.replace('Home')}
             />
 
-            <Text style={styles.tagline}>
-              EVERYDAY, BETTER LIFE & BETTER BREATH
-            </Text>
+            <Text style={styles.tagline}>EVERYDAY, BETTER LIFE & BETTER BREATH</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

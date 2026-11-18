@@ -20,10 +20,7 @@ export default function PrimaryButton({
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        (pressed || disabled) && styles.dimmed,
-      ]}
+      style={({ pressed }) => [styles.button, (pressed || disabled) && styles.dimmed]}
     >
       <LinearGradient
         colors={[colors.primary, colors.primaryDark]}
